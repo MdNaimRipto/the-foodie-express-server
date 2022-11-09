@@ -17,13 +17,13 @@ const run = async () => {
         const servicesCollection = client.db("theFoodieExpress").collection("services")
         app.get("/services", async (req, res) => {
             const query = {}
-            const cursor = servicesCollection.find(query)
+            const cursor = servicesCollection.find(query).sort({ _id: -1 })
             const services = await cursor.limit(3).toArray()
             res.send(services)
         })
         app.get("/allServices", async (req, res) => {
             const query = {}
-            const cursor = servicesCollection.find(query)
+            const cursor = servicesCollection.find(query).sort({ _id: -1 })
             const services = await cursor.toArray()
             res.send(services)
         })
@@ -32,6 +32,11 @@ const run = async () => {
             const query = { _id: ObjectId(id) };
             const serviceDetails = await servicesCollection.findOne(query)
             res.send(serviceDetails)
+        })
+        app.post("/addService", async (req, res) => {
+            const service = req.body;
+            const result = await servicesCollection.insertOne(service)
+            res.send(result)
         })
     }
     finally {
